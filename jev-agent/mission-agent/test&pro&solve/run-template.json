@@ -1,0 +1,86 @@
+{
+  "schema_version": 2,
+  "record_kind": "evaluation_manifest",
+  "run_id": "YYYYMMDD-case-mode-repeat",
+  "session_id": null,
+  "case_id": null,
+  "round_id": null,
+  "repetition": null,
+  "execution_status": "NOT_RUN",
+  "started_at_jst": null,
+  "ended_at_jst": null,
+  "revision": {
+    "git_head": null,
+    "config_revision": null,
+    "redacted_diff_path": null
+  },
+  "baseline": {
+    "snapshot_path": null,
+    "scene": null,
+    "map_id": null,
+    "profile": null,
+    "initial_pose_ground_truth": null,
+    "configuration_snapshot_path": null
+  },
+  "input": {
+    "user_command": null,
+    "fault_operation": null,
+    "fault_confirmed": null,
+    "fault_evidence_refs": [],
+    "reset_operation": null
+  },
+  "expected": {
+    "task_graph": [],
+    "slots_and_provenance": {},
+    "allowed_actions": [],
+    "forbidden_actions": [],
+    "failure_continuation_policy": null,
+    "terminal_state": null,
+    "acceptance_tolerances": {},
+    "observation_deadline_sec": null
+  },
+  "evidence_refs": {
+    "mission_id": null,
+    "request_ids": [],
+    "incident_ids": [],
+    "human_report": {
+      "report_id": null,
+      "path": null,
+      "updated_at": null,
+      "sha256": null
+    },
+    "skill_events": {
+      "path": null,
+      "line_start": null,
+      "line_end": null
+    },
+    "jev_calls": {
+      "path": null,
+      "line_start": null,
+      "line_end": null
+    },
+    "recovery_logs": [],
+    "rosbag": null,
+    "images": [],
+    "screenshots": []
+  },
+  "evaluation": {
+    "outcome": null,
+    "failure_layer": null,
+    "ground_truth_source": null,
+    "comparison_eligible": null,
+    "exclusion_reason": null,
+    "problem_ids": [],
+    "recovery_attribution": null,
+    "verified_recovered": null,
+    "original_mission_resumed": null,
+    "measurements": {},
+    "facts_with_evidence_refs": [],
+    "unverified_hypotheses": []
+  },
+  "derived_metrics": {
+    "path": null,
+    "extractor_revision": null,
+    "source_fingerprint": null
+  }
+}

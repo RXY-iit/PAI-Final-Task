@@ -1,0 +1,134 @@
+schema_version: 2
+# Closed-set detector capabilities, NOT open-vocabulary detection.
+# Check against checkpoint model.names when changing weights/providers.
+# Registration is semantic support, not a guarantee of visual detection.
+detector_contract:
+  weights: models/perception/yolo11s.pt
+  providers: [yolo11s, yolo11s_ocr]
+  vocabulary: closed_set
+detector_classes:
+  [person, bicycle, car, motorcycle, airplane, bus, train, truck, boat,
+   "traffic light", "fire hydrant", "stop sign", "parking meter", bench, bird,
+   cat, dog, horse, sheep, cow, elephant, bear, zebra, giraffe, backpack,
+   umbrella, handbag, tie, suitcase, frisbee, skis, snowboard, "sports ball",
+   kite, "baseball bat", "baseball glove", skateboard, surfboard,
+   "tennis racket", bottle, "wine glass", cup, fork, knife, spoon, bowl,
+   banana, apple, sandwich, orange, broccoli, carrot, "hot dog", pizza, donut,
+   cake, chair, couch, "potted plant", bed, "dining table", toilet, tv,
+   laptop, mouse, remote, keyboard, "cell phone", microwave, oven, toaster,
+   sink, refrigerator, book, clock, vase, scissors, "teddy bear",
+   "hair drier", toothbrush]
+
+# Only these configured HSV masks are supported. Do not infer shades from a
+# base color. Overlapping red/orange/yellow ranges are not exclusive classes.
+color_contract:
+  backend: opencv_hsv
+  hue_range: [0, 180]
+  saturation_value_range: [0, 255]
+  same_instance_required_for_color_object: true
+  unsupported_shades: [light_blue, dark_blue, turquoise, pink, purple, brown, gray]
+  lighting_calibrated: false
+colors:
+  red:
+    aliases: [red, reddish, 赤, 赤い, 赤色]
+    hsv_ranges:
+      - lower: [0, 80, 60]
+        upper: [12, 255, 255]
+      - lower: [170, 80, 60]
+        upper: [180, 255, 255]
+  blue:
+    aliases: [blue, bluish, 青, 青い, 青色]
+    hsv_ranges:
+      - lower: [95, 70, 50]
+        upper: [130, 255, 255]
+  green:
+    aliases: [green, 緑, 緑色, グリーン]
+    hsv_ranges:
+      - lower: [40, 55, 45]
+        upper: [85, 255, 255]
+  yellow:
+    aliases: [yellow, 黄色, 黄, 黄色い]
+    hsv_ranges:
+      - lower: [18, 70, 70]
+        upper: [38, 255, 255]
+  orange:
+    aliases: [orange, オレンジ, 橙, 橙色]
+    hsv_ranges:
+      - lower: [8, 80, 70]
+        upper: [24, 255, 255]
+  black:
+    aliases: [black, 黒, 黒い, 黒色]
+    hsv_ranges:
+      - lower: [0, 0, 0]
+        upper: [180, 255, 55]
+  white:
+    aliases: [white, 白, 白い, 白色]
+    hsv_ranges:
+      - lower: [0, 0, 180]
+        upper: [180, 55, 255]
+
+# Optional names/aliases or explicit unions of supported classes, not extra
+# model capabilities. Every classes entry MUST occur in detector_classes.
+# Exact classes need no entry here. No implicit substitute/fallback classes.
+object_aliases:
+  bottle:
+    aliases: [bottle, bottles, 瓶, 瓶子, ボトル]
+    detector: yolo11s
+    classes: [bottle]
+  car:
+    aliases: [car, auto, 車, 自動車, くるま]
+    detector: yolo11s
+    classes: [car]
+  vehicle:
+    # A broad supported category must not silently widen the narrower car query.
+    aliases: [vehicle, vehicles, 車両]
+    detector: yolo11s
+    classes: [car, truck, bus]
+  person:
+    aliases: [person, human, worker, 人, 人間, 作業員]
+    detector: yolo11s
+    classes: [person]
+
+# A semantic lexicon of known gaps. These are NEVER executable object checks.
+# Unknown nouns are also unsupported; this list is not an exhaustive denylist.
+unsupported_objects:
+  box: {aliases: [box, boxes, carton, package, parcel, 箱, 盒子, ボックス, 段ボール], reason: No box class in the installed checkpoint}
+  bucket: {aliases: [bucket, pail, 桶, バケツ], reason: No bucket class in the installed checkpoint}
+  forklift: {aliases: [forklift, フォークリフト], reason: No forklift class in the installed checkpoint}
+  pallet: {aliases: [pallet, パレット], reason: No pallet class in the installed checkpoint}
+
+# These are query kinds, not trained YOLO labels. Current deployment uses
+# English OCR resources; arbitrary CJK OCR and scene description are not promised.
+text_contract:
+  providers: [yolo11s_ocr]
+  languages: [en]
+  scripts: [latin, digits]
+  matching: exact_token
+  literal_queries: true
+  standalone_kind_query: unsupported_requires_literal
+  arbitrary_scene_description: false
+  alternatives: explicit_or_mapped_contract_only
+
+text:
+  digit:
+    aliases: [number, digit, digits, 番号, 数字, number label]
+    detector: ocr
+    pattern: "\\d+"
+  letter:
+    aliases: [letter, alphabet, 字母, 文字, アルファベット]
+    detector: ocr
+    pattern: "[A-Za-z]+"
+  text:
+    aliases: [text, label, sign, 字, 字幕, ラベル, 文字, 標識]
+    detector: ocr
+    pattern: ".+"
+
+unsupported_attributes:
+  size:
+    aliases: [small, tiny, big, large, 小さい, 小さな, 大きい, 大きな]
+    behavior: needs_human
+
+abstract:
+  unsafe:
+    aliases: [unsafe, dangerous, hazard, risk, 不安全, 危険, 危ない, 異常]
+    behavior: needs_human
